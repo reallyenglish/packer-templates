@@ -14,6 +14,7 @@ EOF
 
 ASSUME_ALWAYS_YES=yes pkg install curl
 ASSUME_ALWAYS_YES=yes pkg install sudo
+ASSUME_ALWAYS_YES=yes pkg install python ansible rsync
 
 cat <<EOF > /etc/rc.conf
 ifconfig_em0="DHCP"
