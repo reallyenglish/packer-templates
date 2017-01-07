@@ -9,6 +9,14 @@ if [ "$ubuntu_version" == '12.04' ]; then
   sudo rm -rf /var/lib/apt/lists
 fi
 
+# Disable periodic activities of apt, which causes `apt` tasks to fail by
+# holding a lock
+if [ "$ubuntu_version" == '16.04' ]; then
+  sudo tee -a /etc/apt/apt.conf.d/10disable-periodic <<EOF
+APT::Periodic::Enable "0";
+EOF
+fi
+
 sudo apt-get update
 
 # install the latest ansible from ppa
