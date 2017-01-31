@@ -57,6 +57,7 @@
     "type": "shell",
     "scripts": [
       "scripts/centos-7.2/repo.sh",
+      "scripts/centos/ansible.sh",
       "scripts/centos/virtualbox.sh",
       "scripts/centos/vmware.sh",
       "scripts/common/vagrant.sh",
