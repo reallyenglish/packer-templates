@@ -3,6 +3,12 @@
 set -e
 set -x
 
+# Disable periodic activities of apt, which causes `apt` tasks to fail by
+# holding a lock
+sudo tee -a /etc/apt/apt.conf.d/10disable-periodic <<EOF
+APT::Periodic::Enable "0";
+EOF
+
 sudo apt-get update
 
 # install the latest ansible from ppa
