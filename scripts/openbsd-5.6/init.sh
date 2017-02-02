@@ -4,7 +4,7 @@ set -e
 set -x
 
 sudo tee /etc/pkg.conf <<EOF
-installpath = http://ftp5.usa.openbsd.org/pub/OpenBSD/5.6/packages/i386/
+installpath = http://ftp5.usa.openbsd.org/pub/OpenBSD/%c/packages/%a/
 EOF
 
 sudo pkg_add ansible rsync--
