@@ -18,6 +18,71 @@ ASSUME_ALWAYS_YES=yes pkg install curl
 ASSUME_ALWAYS_YES=yes pkg install sudo
 ASSUME_ALWAYS_YES=yes pkg install python ansible rsync
 
+#
+# apply a patch to fix https://github.com/ansible/ansible/issues/23016 in
+# ansible 2.2.2.0. this should be removed when the next release is available in
+# the official package tree.
+#
+cat <<__EOF__ | patch -d /usr/local/lib/python2.7/site-packages/ansible -p3
+From 42afc7dc45d257cf843ebae9e45f66fe3ad05876 Mon Sep 17 00:00:00 2001
+From: Brian Coca <bcoca@users.noreply.github.com>
+Date: Wed, 29 Mar 2017 16:47:56 -0400
+Subject: [PATCH] fix 'ungrouped' issue with some inventory formats (#23018)
+
+fixes #23016
+(cherry picked from commit c4cff44e772e8b4631386243169d164bc0b0937c)
+---
+ lib/ansible/inventory/__init__.py | 1 -
+ lib/ansible/inventory/group.py    | 6 ++++++
+ lib/ansible/inventory/host.py     | 4 ++++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/lib/ansible/inventory/__init__.py b/lib/ansible/inventory/__init__.py
+index 00265f6..1ae2db8 100644
+--- a/lib/ansible/inventory/__init__.py
++++ b/lib/ansible/inventory/__init__.py
+@@ -185,7 +185,6 @@ def parse_inventory(self, host_list):
+                 if length == 0 or (length == 1 and all in mygroups):
+                     ungrouped.add_host(host)
+ 
+-
+     def _match(self, str, pattern_str):
+         try:
+             if pattern_str.startswith('~'):
+diff --git a/lib/ansible/inventory/group.py b/lib/ansible/inventory/group.py
+index 63c297a..354687a 100644
+--- a/lib/ansible/inventory/group.py
++++ b/lib/ansible/inventory/group.py
+@@ -114,6 +114,12 @@ def add_host(self, host):
+         host.add_group(self)
+         self.clear_hosts_cache()
+ 
++    def remove_host(self, host):
++
++        self.hosts.remove(host)
++        host.remove_group(self)
++        self.clear_hosts_cache()
++
+     def set_variable(self, key, value):
+ 
+         self.vars[key] = value
+diff --git a/lib/ansible/inventory/host.py b/lib/ansible/inventory/host.py
+index a48fbce..6c79f49 100644
+--- a/lib/ansible/inventory/host.py
++++ b/lib/ansible/inventory/host.py
+@@ -112,6 +112,10 @@ def add_group(self, group):
+ 
+         self.groups.append(group)
+ 
++    def remove_group(self, group):
++
++        self.groups.remove(group)
++
+     def set_variable(self, key, value):
+ 
+         self.vars[key]=value
+__EOF__
+
 interface=$(route get default | awk '/interface/ { print $2 }')
 cat <<EOF > /etc/rc.conf
 ifconfig_${interface}="DHCP"
