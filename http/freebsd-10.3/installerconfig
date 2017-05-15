@@ -97,3 +97,7 @@ Defaults:vagrant !requiretty
 vagrant ALL=(ALL) NOPASSWD: ALL
 EOF
 chmod 440 /usr/local/etc/sudoers.d/vagrant
+
+cat <<EOF >> /boot/loader.conf
+autoboot_delay="0"
+EOF

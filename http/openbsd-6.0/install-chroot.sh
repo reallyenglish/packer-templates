@@ -14,3 +14,7 @@ Defaults:vagrant !requiretty
 vagrant ALL=(ALL) NOPASSWD: ALL
 EOF
 chmod 440 /etc/sudoers.d/vagrant
+
+cat <<EOF > /etc/boot.conf
+set timeout 1
+EOF
