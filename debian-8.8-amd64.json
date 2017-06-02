@@ -81,6 +81,7 @@
   "provisioners": [{
     "type": "shell",
     "scripts": [
+      "scripts/debian/apt.sh",
       "scripts/debian/virtualbox.sh",
       "scripts/debian/vmware.sh",
       "scripts/common/vagrant.sh",
