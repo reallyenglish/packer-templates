@@ -91,15 +91,19 @@ namespace :reallyenglish do
   desc 'Build images for reallyenglish'
   task :build, :host do |_t, args|
     images = args[:host] ? [ args[:host] ] : @yaml['box']
-    images.sort.each do |i|
-      r = system("packer build -only virtualbox-iso '#{i}.json'")
+    images.each do |i|
+      json_file = "#{i}.json"
+      box_name = "trombik/test-#{i}"
+      box_file = "#{i}-virtualbox.box"
+      vagrant_hostname = "#{i.gsub(/[.]/, '_')}-virtualbox'"
+      r = system("packer build -only virtualbox-iso '#{json_file}'")
       raise "Failed to build #{i}" unless r
-      r = system("vagrant box add --force --name 'trombik/test-#{i}' '#{i}-virtualbox.box'")
+      r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
       raise "Failed to box add test image #{i}" unless r
       ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
-      r = system("vagrant up '#{i.gsub(/[.]/, '_')}-virtualbox'")
+      r = system("vagrant up '#{vagrant_hostname}'")
       raise "Failed to launch #{i}" unless r
-      Rake::Task['reallyenglish:spec'].invoke(i.gsub(/[.]/, '_') + '-virtualbox')
+      Rake::Task['reallyenglish:spec'].invoke(vagrant_hostname)
     end
   end
 
