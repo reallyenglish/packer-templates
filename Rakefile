@@ -84,6 +84,33 @@ RSpec::Core::RakeTask.new(:spec, :host) do |_t, args|
   ENV['HOST'] = args[:host]
 end
 
+namespace :reallyenglish do
+  require 'yaml'
+  @yaml = YAML.load_file("box.reallyenglish.yml")
+
+  desc 'Build images for reallyenglish'
+  task :build, :host do |_t, args|
+    images = args[:host] ? [ args[:host] ] : @yaml['box']
+    images.sort.each do |i|
+      r = system("packer build -only virtualbox-iso '#{i}.json'")
+      raise "Failed to build #{i}" unless r
+      r = system("vagrant box add --force --name 'trombik/test-#{i}' '#{i}-virtualbox.box'")
+      raise "Failed to box add test image #{i}" unless r
+      ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
+      r = system("vagrant up '#{i.gsub(/[.]/, '_')}-virtualbox'")
+      raise "Failed to launch #{i}" unless r
+      Rake::Task['reallyenglish:spec'].invoke(i.gsub(/[.]/, '_') + '-virtualbox')
+    end
+  end
+
+  desc 'Run serverspec tests on a host for reallyenglish'
+  RSpec::Core::RakeTask.new(:spec, :host) do |t, args|
+    t.pattern = 'reallyenglish_spec/**/*_spec.rb'
+    ENV['HOST'] = args[:host]
+    ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
+  end
+end
+
 def request_head(uri, &block)
   uri = URI(uri)
   Net::HTTP.start(uri.host, uri.port) do |http|
