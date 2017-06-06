@@ -1,0 +1,24 @@
+Vagrant.configure('2') do |config|
+  require "yaml"
+  yaml = YAML.load_file("box.reallyenglish.yml")
+  images = yaml["box"].map { |b| Pathname(b) }
+
+  7.times do
+    config.vm.network :private_network, type: :dhcp
+  end
+
+  images.sort.each do |template|
+    name = template.basename('.json').to_s
+    escaped_name = name.gsub(/[.]/, '_')
+
+    config.vm.define "#{escaped_name}-virtualbox" do |c|
+      c.vm.box = "trombik/test-#{name}"
+
+      c.vm.provider :virtualbox do |v|
+        v.name = name
+        v.gui = false
+      end
+    end
+  end
+end
+# vim: ft=ruby
