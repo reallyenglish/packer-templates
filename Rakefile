@@ -89,13 +89,13 @@ namespace :reallyenglish do
   @yaml = YAML.load_file("box.reallyenglish.yml")
 
   desc 'Build images for reallyenglish'
-  task :build, :host do |_t, args|
+  task :build, [:host] => :clean do |_t, args|
     images = args[:host] ? [ args[:host] ] : @yaml['box']
     images.each do |i|
       json_file = "#{i}.json"
       box_name = "trombik/test-#{i}"
       box_file = "#{i}-virtualbox.box"
-      vagrant_hostname = "#{i.gsub(/[.]/, '_')}-virtualbox'"
+      vagrant_hostname = "#{i.gsub(/[.]/, '_')}-virtualbox"
       r = system("packer build -only virtualbox-iso '#{json_file}'")
       raise "Failed to build #{i}" unless r
       r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
@@ -105,6 +105,13 @@ namespace :reallyenglish do
       raise "Failed to launch #{i}" unless r
       Rake::Task['reallyenglish:spec'].invoke(vagrant_hostname)
     end
+  end
+
+  desc 'Destroy VMs'
+  task :clean do |_t|
+      ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
+      r = system('vagrant destroy -f')
+      raise "Failed to destroy VMs" unless r
   end
 
   desc 'Run serverspec tests on a host for reallyenglish'
