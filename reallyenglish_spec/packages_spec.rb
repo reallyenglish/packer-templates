@@ -20,10 +20,10 @@ when "openbsd"
   prefix = "/usr/local/bin"
   python_version = "2.7"
   python_symlinks = {
-    "#{prefix}/python#{python_version}" => "#{prefix}/python",
-    "#{prefix}/python#{python_version}-2to3" => "#{prefix}/2to3",
-    "#{prefix}/python#{python_version}-config" => "#{prefix}/python-config",
-    "#{prefix}/pydoc#{python_version}" => "#{prefix}/pydoc"
+    "#{prefix}/python" => "#{prefix}/python#{python_version}",
+    "#{prefix}/2to3" => "#{prefix}/python#{python_version}-2to3",
+    "#{prefix}/python-config" => "#{prefix}/python#{python_version}-config",
+    "#{prefix}/pydoc" => "#{prefix}/pydoc#{python_version}"
   }
   python_symlinks.each do |k, v|
     describe file(k) do
