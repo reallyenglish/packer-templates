@@ -1,6 +1,5 @@
 require 'spec_helper'
 
 describe yumrepo('epel'), if: os[:family] == 'redhat' do
-  it { should exist }
-  it { should_not be_enabled }
+  it { should_not exist }
 end
