@@ -124,9 +124,9 @@ end
 
 def request_head(uri, &block)
   uri = URI(uri)
-  Net::HTTP.start(uri.host, uri.port) do |http|
-    http.request_head(uri, &block)
-  end
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true if uri.scheme == 'https'
+  http.request_head(uri, &block)
 end
 
 def available?(response)
