@@ -1,7 +1,7 @@
 {
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `mirror`}}/releases/amd64/amd64/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-freebsd-10.3-amd64-{{build_type}}",
@@ -29,7 +29,7 @@
   }, {
     "type": "virtualbox-iso",
     "guest_os_type": "FreeBSD_64",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `mirror`}}/releases/amd64/amd64/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-freebsd-10.3-amd64-{{build_type}}",
@@ -59,7 +59,7 @@
   }, {
     "type": "vmware-iso",
     "guest_os_type": "freeBSD-64",
-    "iso_url": "{{user `mirror`}}/releases/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
+    "iso_url": "{{user `mirror`}}/releases/amd64/amd64/ISO-IMAGES/10.3/FreeBSD-10.3-RELEASE-amd64-disc1.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-freebsd-10.3-amd64-{{build_type}}",
@@ -112,7 +112,7 @@
     "iso_checksum": "fef068cf6dea26923ab84b62ba9f21461ca0bdec90a0741c8ffb0e1ca29e410d",
     "iso_checksum_type": "sha256",
     "memory": "512",
-    "mirror": "http://ftp.freebsd.org/pub/FreeBSD",
+    "mirror": "https://download.freebsd.org/ftp",
     "ssh_timeout": "60m"
   }
 }
