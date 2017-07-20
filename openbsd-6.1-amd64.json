@@ -1,7 +1,7 @@
 {
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/6.1/amd64/cd61.iso",
+    "iso_url": "{{user `mirror`}}/6.1/amd64/install61.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-6.1-amd64-{{build_type}}",
@@ -29,7 +29,7 @@
   }, {
     "type": "virtualbox-iso",
     "guest_os_type": "OpenBSD_64",
-    "iso_url": "{{user `mirror`}}/6.1/amd64/cd61.iso",
+    "iso_url": "{{user `mirror`}}/6.1/amd64/install61.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-6.1-amd64-{{build_type}}",
@@ -60,7 +60,7 @@
   }, {
     "type": "vmware-iso",
     "guest_os_type": "freebsd-64",
-    "iso_url": "{{user `mirror`}}/6.1/amd64/cd61.iso",
+    "iso_url": "{{user `mirror`}}/6.1/amd64/install61.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-6.1-amd64-{{build_type}}",
@@ -106,7 +106,7 @@
     "cpus": "1",
     "disk_size": "40000",
     "headless": "false",
-    "iso_checksum": "37cee759db10ffd5c0d086771b62ed771187a24baa4946e601153e394ce31aa6",
+    "iso_checksum": "dfb4bf2408d993645ef9560e6913be48ca6e854322c42156954d4da93d450fd9",
     "iso_checksum_type": "sha256",
     "memory": "512",
     "mirror": "http://ftp.openbsd.org/pub/OpenBSD",
