@@ -1,8 +1,8 @@
-require 'spec_helper'
+require "spec_helper"
 
 case os[:family]
 when "ubuntu"
-  if os[:release] == '16.04'
+  if os[:release].to_f >= 16.04
     describe file("/etc/apt/apt.conf.d/10disable-periodic") do
       it { should be_exist }
       it { should be_file }

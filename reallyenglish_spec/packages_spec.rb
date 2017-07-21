@@ -1,6 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
-packages = %w( ansible rsync curl )
+packages = %w( ansible rsync curl sudo )
 
 packages.each do |p|
   describe package(p) do
@@ -9,12 +9,27 @@ packages.each do |p|
 end
 
 case os[:family]
+when "freebsd"
+  describe package("virtualbox-ose-additions-nox11") do
+    it { should be_installed }
+  end
 when "openbsd"
-  describe file("/etc/pkg.conf") do
-    it { should exist }
-    it { should be_file }
-    it { should be_mode 644 }
-    its(:content) { should match(/^installpath\s*=\s*ftp\.openbsd\.org/) }
+  if os[:release].to_f >= 6.1
+    describe file("/etc/installurl") do
+      it { should be_file }
+      it { should be_mode 644 }
+      its(:content) do
+        pending "this one is to be fixed later in a branch that is waiting in my PR queue"
+        should match(/^#{Regexp.escape("http://ftp.openbsd.org/pub/OpenBSD")}$/)
+      end
+    end
+  else
+    describe file("/etc/pkg.conf") do
+      it { should exist }
+      it { should be_file }
+      it { should be_mode 644 }
+      its(:content) { should match(/^installpath\s*=\s*ftp\.openbsd\.org/) }
+    end
   end
 
   prefix = "/usr/local/bin"
@@ -35,7 +50,7 @@ when "openbsd"
     describe file(v) do
       it { should exist }
       it { should be_file }
-      it { should be_mode 755 }
+      it { should be_mode os[:release].to_f >= 6.0 ? 755 : 555 }
     end
   end
 end
