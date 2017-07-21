@@ -16,5 +16,5 @@ codename=`( . /etc/os-release && printf '%s' $VERSION | sed -e 's/.*(\(.*\)).*/\
 sudo apt-get -y install software-properties-common
 sudo apt-add-repository "deb http://ftp.debian.org/debian ${codename}-backports main"
 sudo apt-get update
-sudo apt-get -y -t jessie-backports install ansible
+sudo apt-get -y -t "${codename}-backports" install ansible
 sudo apt-get -y install rsync
