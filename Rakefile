@@ -87,38 +87,72 @@ end
 namespace :reallyenglish do
   require 'yaml'
   @yaml = YAML.load_file("box.reallyenglish.yml")
+  ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
 
-  desc 'Build images for reallyenglish'
-  task :build, [:host] => :clean do |_t, args|
-    images = args[:host] ? [ args[:host] ] : @yaml['box']
-    images.each do |i|
-      json_file = "#{i}.json"
-      box_name = "trombik/test-#{i}"
-      box_file = "#{i}-virtualbox.box"
-      vagrant_hostname = "#{i.gsub(/[.]/, '_')}-virtualbox"
-      r = system("packer build -only virtualbox-iso '#{json_file}'")
-      raise "Failed to build #{i}" unless r
-      r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
-      raise "Failed to box add test image #{i}" unless r
-      ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
-      r = system("vagrant up '#{vagrant_hostname}'")
-      raise "Failed to launch #{i}" unless r
-      Rake::Task['reallyenglish:spec'].invoke(vagrant_hostname)
+  desc 'Test all boxes'
+  task :test do |_t|
+    images = @yaml['box']
+    images.each do |image|
+      Rake::Task['reallyenglish:do_test'].invoke(image)
+      Rake::Task['reallyenglish:do_test'].reenable
     end
   end
 
-  desc 'Destroy VMs'
+  desc 'Test a box'
+  task :do_test, [:host] do |_t, args|
+    [
+      'reallyenglish:build',
+      'reallyenglish:import',
+      'reallyenglish:up',
+      'reallyenglish:spec',
+      'reallyenglish:destroy'
+    ].each do |task|
+      Rake::Task[task].invoke(args[:host])
+      Rake::Task[task].reenable
+    end
+  end
+
+  desc 'Build a box'
+  task :build, [:host] do |_t, args|
+    json_file = "#{args[:host]}.json"
+    r = system("packer build -only virtualbox-iso '#{json_file}'")
+    raise "Failed to build #{i}" unless r
+  end
+
+  desc 'Import a box'
+  task :import, [:host] do |_t, args| 
+    box_name = "trombik/test-#{args[:host]}"
+    box_file = "#{args[:host]}-virtualbox.box"
+    r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
+    raise "Failed to box add test image #{args[:host]}" unless r
+  end
+
+  desc 'Boot a VM'
+  task :up, [:host] do |_t, args|
+    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
+    r = system("vagrant up '#{vagrant_hostname}'")
+    raise "Failed to launch #{i}" unless r
+  end
+
+  desc 'Run serverspec tests on a VM'
+  RSpec::Core::RakeTask.new(:spec, :host) do |t, args|
+    t.pattern = 'reallyenglish_spec/**/*_spec.rb'
+    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
+    ENV['HOST'] = vagrant_hostname
+  end
+
+  desc 'Destroy a VM'
+  task :destroy, [:host] do |_t, args|
+    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
+    r = system("vagrant destroy -f '#{vagrant_hostname}'")
+    raise "Failed to destroy #{i}" unless r
+  end
+
+  desc 'Clean'
   task :clean do |_t|
       ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
       r = system('vagrant destroy -f')
       raise "Failed to destroy VMs" unless r
-  end
-
-  desc 'Run serverspec tests on a host for reallyenglish'
-  RSpec::Core::RakeTask.new(:spec, :host) do |t, args|
-    t.pattern = 'reallyenglish_spec/**/*_spec.rb'
-    ENV['HOST'] = args[:host]
-    ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
   end
 end
 
