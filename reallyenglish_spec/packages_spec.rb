@@ -53,4 +53,10 @@ when "openbsd"
       it { should be_mode os[:release].to_f >= 6.0 ? 755 : 555 }
     end
   end
+  # Specify a package branch
+  describe file("/usr/local/lib/python2.7/site-packages/ansible/modules/extras/packaging/os/openbsd_pkg.py") do
+    it { should exist }
+    it { should be_file }
+    its(:content) { should match(/^#{Regexp.escape("# Specify a package branch (requires at least OpenBSD 6.0)")}$/) }
+  end
 end
