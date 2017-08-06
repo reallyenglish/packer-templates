@@ -55,7 +55,8 @@
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
       ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
-    ]
+    ],
+    "post_shutdown_delay": "30s"
   }, {
     "type": "vmware-iso",
     "guest_os_type": "freebsd-64",
