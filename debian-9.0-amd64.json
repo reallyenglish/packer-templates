@@ -1,7 +1,7 @@
  {
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/9.0.0/amd64/iso-cd/debian-9.0.0-amd64-netinst.iso",
+    "iso_url": "{{user `mirror`}}/9.1.0/amd64/iso-cd/debian-9.1.0-amd64-netinst.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-debian-9.0-amd64-{{build_type}}",
@@ -28,7 +28,7 @@
   }, {
     "type": "virtualbox-iso",
     "guest_os_type": "Debian_64",
-    "iso_url": "{{user `mirror`}}/9.0.0/amd64/iso-cd/debian-9.0.0-amd64-netinst.iso",
+    "iso_url": "{{user `mirror`}}/9.1.0/amd64/iso-cd/debian-9.1.0-amd64-netinst.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-debian-9.0-amd64-{{build_type}}",
@@ -56,7 +56,7 @@
   }, {
     "type": "vmware-iso",
     "guest_os_type": "debian8-64",
-    "iso_url": "{{user `mirror`}}/9.0.0/amd64/iso-cd/debian-9.0.0-amd64-netinst.iso",
+    "iso_url": "{{user `mirror`}}/9.1.0/amd64/iso-cd/debian-9.1.0-amd64-netinst.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-debian-9.0-amd64-{{build_type}}",
@@ -103,7 +103,7 @@
     "cpus": "1",
     "disk_size": "40000",
     "headless": "false",
-    "iso_checksum": "9d98f339016dc2a3998881949a8f0678baede26b5106f18ef1168d7e13606773",
+    "iso_checksum": "c9e070074de83aa22e141f59a423e5210a5019b369ef1efe61a2afd44ba8f371",
     "iso_checksum_type": "sha256",
     "memory": "512",
     "mirror": "http://cdimage.debian.org/debian-cd/",
