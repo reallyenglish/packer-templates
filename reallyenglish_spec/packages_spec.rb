@@ -18,10 +18,7 @@ when "openbsd"
     describe file("/etc/installurl") do
       it { should be_file }
       it { should be_mode 644 }
-      its(:content) do
-        pending "this one is to be fixed later in a branch that is waiting in my PR queue"
-        should match(/^#{Regexp.escape("http://ftp.openbsd.org/pub/OpenBSD")}$/)
-      end
+      its(:content) { should match(/^#{Regexp.escape("http://ftp.openbsd.org/pub/OpenBSD")}$/) }
     end
   else
     describe file("/etc/pkg.conf") do
