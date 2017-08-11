@@ -3,8 +3,8 @@
 set -e
 set -x
 
-cat <<EOF > /etc/installurl
-http://ftp.openbsd.org/pub/OpenBSD
+cat <<EOF > /etc/pkg.conf
+installpath = ftp.openbsd.org
 EOF
 
 pkg_add sudo--
