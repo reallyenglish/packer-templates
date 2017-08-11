@@ -2,7 +2,7 @@ require "spec_helper"
 
 case os[:family]
 when "openbsd"
-  if os[:release].to_f >= 6.1
+  if os[:release].to_f >= 5.9
     describe file("/etc/fstab") do
       it { should exist }
       it { should be_file }
