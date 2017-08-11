@@ -153,6 +153,8 @@ namespace :reallyenglish do
       ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
       r = system('vagrant destroy -f')
       raise "Failed to destroy VMs" unless r
+      r = system('rm *.box')
+      raise "Failed to destroy VMs" unless r
   end
 end
 
