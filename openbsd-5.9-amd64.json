@@ -1,7 +1,7 @@
 {
   "builders": [{
     "type": "qemu",
-    "iso_url": "{{user `mirror`}}/5.9/amd64/cd59.iso",
+    "iso_url": "{{user `mirror`}}/5.9/amd64/install59.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-5.9-amd64-{{build_type}}",
@@ -15,6 +15,7 @@
       "dhclient vio0<enter><wait>",
       "ftp -o /install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install.conf<enter><wait>",
       "ftp -o /install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "/install -a -f /install.conf && chroot /mnt < /install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -28,7 +29,7 @@
   }, {
     "type": "virtualbox-iso",
     "guest_os_type": "OpenBSD_64",
-    "iso_url": "{{user `mirror`}}/5.9/amd64/cd59.iso",
+    "iso_url": "{{user `mirror`}}/5.9/amd64/install59.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-5.9-amd64-{{build_type}}",
@@ -43,6 +44,7 @@
       "dhclient em0<enter><wait>",
       "ftp -o /install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install.conf<enter><wait>",
       "ftp -o /install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "/install -a -f /install.conf && chroot /mnt < /install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -57,7 +59,7 @@
   }, {
     "type": "vmware-iso",
     "guest_os_type": "freebsd-64",
-    "iso_url": "{{user `mirror`}}/5.9/amd64/cd59.iso",
+    "iso_url": "{{user `mirror`}}/5.9/amd64/install59.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
     "output_directory": "output-openbsd-5.9-amd64-{{build_type}}",
@@ -71,6 +73,7 @@
       "dhclient em0<enter><wait>",
       "ftp -o /install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install.conf<enter><wait>",
       "ftp -o /install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-5.9/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "/install -a -f /install.conf && chroot /mnt < /install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -102,7 +105,7 @@
     "cpus": "1",
     "disk_size": "40000",
     "headless": "false",
-    "iso_checksum": "ea3bad95ed6975784bfc85a837820dace4147443e57cf23c1a6e4d12243d37c2",
+    "iso_checksum": "685262fc665425c61a2952b2820389a2d331ac5558217080e6d564d2ce88eecb",
     "iso_checksum_type": "sha256",
     "memory": "512",
     "mirror": "http://ftp.openbsd.org/pub/OpenBSD",
