@@ -16,6 +16,7 @@
       "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.conf<enter><wait>",
       "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.sh<enter><wait>",
       "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "sh install.sh < install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -45,6 +46,7 @@
       "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.conf<enter><wait>",
       "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.sh<enter><wait>",
       "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "sh install.sh < install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",
@@ -75,6 +77,7 @@
       "ftp -o install.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.conf<enter><wait>",
       "ftp -o install.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install.sh<enter><wait>",
       "ftp -o install-chroot.sh http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd-6.1/install-chroot.sh<enter><wait>",
+      "ftp -o disklabel.conf http://{{.HTTPIP}}:{{.HTTPPort}}/openbsd/disklabel.conf<enter><wait>",
       "sh install.sh < install-chroot.sh && reboot<enter>"
     ],
     "ssh_timeout": "{{user `ssh_timeout`}}",

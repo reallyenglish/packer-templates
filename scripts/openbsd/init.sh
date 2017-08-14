@@ -25,4 +25,6 @@ EOF
 # others
 sudo ftp -o /usr/local/lib/python2.7/site-packages/ansible/modules/extras/packaging/os/openbsd_pkg.py https://raw.githubusercontent.com/ansible/ansible/b134352d8ca33745c4277e8cb85af3ad2dcae2da/lib/ansible/modules/packaging/os/openbsd_pkg.py
 
+sed -e 's/ \/opt ffs rw,nodev,nosuid 1 2/ \/opt ffs rw,nosuid 1 2/' /etc/fstab | sudo tee /etc/fstab
+
 sed -e 's/\(ttyC[^0].*getty.*\)on /\1off/' /etc/ttys | sudo tee /etc/ttys > /dev/null
