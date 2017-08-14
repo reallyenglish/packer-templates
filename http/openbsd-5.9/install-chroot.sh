@@ -3,6 +3,10 @@
 set -e
 set -x
 
+cat <<EOF > /etc/pkg.conf
+installpath = ftp.openbsd.org
+EOF
+
 pkg_add sudo--
 cat <<EOF > /etc/sudoers
 
