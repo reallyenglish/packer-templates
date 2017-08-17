@@ -15,6 +15,15 @@ comprehensive tests. The name space is intended to include tasks
 specific to the organization. When building a box the tasks in the name
 space should be used.
 
+## Branches
+
+Our forked repository has two main branches; `master` that follows the
+upstream's `master` branch, and `reallyenglish-master` that is the master
+branch for production and development. `reallyenglish-master` is the default
+branch, into which all the fixes, modifications, and enhancement specific to
+the organization are merged. When you merge a development branch, be sure to
+merge it into `reallyenglish-master` unless you are updating `master` branch.
+
 ## `box.reallyenglish.yml`
 
 The file contains a list of box names that the organization is using.
