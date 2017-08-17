@@ -86,6 +86,17 @@ end
 
 namespace :reallyenglish do
   require 'yaml'
+
+  # workaround "can't find executable vagrant for gem vagrant. vagrant is not
+  # currently included in the bundle, perhaps you meant to add it to your
+  # Gemfile? (Gem::Exception)". in _bundled_ environemnt, bundler cannot find
+  # `vagrant` gem installed outside of the environment.
+  vagrant_path = ""
+  Bundler.with_clean_env do
+    vagrant_path = Pathname.new(`gem which vagrant`).parent.parent + 'bin'
+  end
+  ENV['PATH'] = "#{vagrant_path}:#{ENV['PATH']}"
+
   @yaml = YAML.load_file("box.reallyenglish.yml")
   ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
 
