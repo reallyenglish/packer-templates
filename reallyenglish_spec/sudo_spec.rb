@@ -4,7 +4,7 @@ cmd = ""
 case os[:family]
 when "freebsd"
   cmd = "su -m root -c 'sudo echo'"
-when "openbsd", "debian", "ubuntu", "redhat"
+else
   cmd = "su -l -s /bin/sh root -c 'sudo echo'"
 end
 
