@@ -29,7 +29,9 @@ EOF
 # fixes https://github.com/reallyenglish/ansible-role-postfix/issues/13 and
 # others
 # XXX remove the workaround below when 5.9 has the latest ansible
-sudo ftp -o /usr/local/lib/python2.7/site-packages/ansible/modules/extras/packaging/os/openbsd_pkg.py https://raw.githubusercontent.com/ansible/ansible/b134352d8ca33745c4277e8cb85af3ad2dcae2da/lib/ansible/modules/packaging/os/openbsd_pkg.py
+if [ `uname -r` == `5.9` ]; then
+    sudo ftp -o /usr/local/lib/python2.7/site-packages/ansible/modules/extras/packaging/os/openbsd_pkg.py https://raw.githubusercontent.com/ansible/ansible/b134352d8ca33745c4277e8cb85af3ad2dcae2da/lib/ansible/modules/packaging/os/openbsd_pkg.py
+fi
 
 sudo sed -i'.bak' -e 's/ \/opt ffs rw,nodev,nosuid 1 2/ \/opt ffs rw,nosuid 1 2/' /etc/fstab
 sudo rm /etc/fstab.bak
