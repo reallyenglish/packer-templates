@@ -78,7 +78,7 @@ when "openbsd"
         its(:exit_status) { should eq 0 }
         its(:stderr) { should eq " [WARNING]: provided hosts list is empty, only localhost is available\n" }
       end
-      
+
       describe file("#{log_dir}/localhost") do
         it { should exist }
         it { should be_file }
