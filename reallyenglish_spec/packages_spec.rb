@@ -65,4 +65,26 @@ when "openbsd"
       its(:content) { should match(/^#{Regexp.escape("# Specify a package branch (requires at least OpenBSD 6.0)")}$/) }
     end
   end
+  if os[:release].to_f >= 6.0
+
+    # test if `openbsd_pkg` is able to parse valid package names below.
+    log_dir = "/var/log/ansible"
+    describe command("mkdir -p #{log_dir}") do
+      its(:exit_status) { should eq 0 }
+      its(:stderr) { should eq "" }
+    end
+    %w( openldap-server--%openldap jdk--%1.8 screen--shm postfix--sasl2-pgsql%stable ).each do |p|
+      describe command("ansible -C -t #{log_dir} -m openbsd_pkg -a 'name=#{p} state=installed' localhost") do
+        its(:exit_status) { should eq 0 }
+        its(:stderr) { should eq " [WARNING]: provided hosts list is empty, only localhost is available\n" }
+      end
+
+      describe file("#{log_dir}/localhost") do
+        it { should exist }
+        it { should be_file }
+        its(:content_as_json) { should include("name" => [p] ) }
+        its(:content_as_json) { should include("state" => "installed") }
+      end
+    end
+  end
 end

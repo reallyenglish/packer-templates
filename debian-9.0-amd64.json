@@ -106,7 +106,7 @@
     "iso_checksum": "c9e070074de83aa22e141f59a423e5210a5019b369ef1efe61a2afd44ba8f371",
     "iso_checksum_type": "sha256",
     "memory": "512",
-    "mirror": "http://cdimage.debian.org/debian-cd/",
+    "mirror": "http://cdimage.debian.org/cdimage/archive",
     "ssh_timeout": "60m"
   }
 }
