@@ -4,7 +4,7 @@ set -e
 set -x
 
 cat <<EOF > /etc/installurl
-http://ftp.openbsd.org/pub/OpenBSD
+https://fastly.cdn.openbsd.org/pub/OpenBSD
 EOF
 
 pkg_add sudo--

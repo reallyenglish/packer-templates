@@ -15,24 +15,27 @@ when "freebsd"
   end
 when "openbsd"
   # XXX RE_5_9 does not have the latest ansible yet
-  if os[:release].to_f >= 6.0
+  if os[:release].to_f >= 6.0 && os[:release].to_f < 6.2
     describe command "ansible --version" do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match(/^ansible\s+2\.3\.2\.0\s+/) }
     end
   end
   if os[:release].to_f >= 6.1
+    describe file("/etc/pkg.conf") do
+      it { should_not exist }
+    end
     describe file("/etc/installurl") do
       it { should be_file }
       it { should be_mode 644 }
-      its(:content) { should match(/^#{Regexp.escape("http://ftp.openbsd.org/pub/OpenBSD")}$/) }
+      its(:content) { should match(/^#{Regexp.escape("https://fastly.cdn.openbsd.org/pub/OpenBSD")}$/) }
     end
   else
     describe file("/etc/pkg.conf") do
       it { should exist }
       it { should be_file }
       it { should be_mode 644 }
-      its(:content) { should match(/^installpath\s*=\s*ftp\.openbsd\.org/) }
+      its(:content) { should match(/^installpath\s*=\s*fastly\.cdn\.openbsd\.org/) }
     end
   end
 

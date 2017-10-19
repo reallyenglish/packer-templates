@@ -3,9 +3,12 @@
 set -e
 set -x
 
-sudo tee /etc/pkg.conf <<EOF
-installpath = ftp.openbsd.org
+# pkg.conf has been replaces with installurl since 6.1
+if [ uanme -r == 5.9 -o `uname -r` == 6.0 ]; then
+    sudo tee /etc/pkg.conf <<EOF
+installpath = fastly.cdn.openbsd.org
 EOF
+fi
 
 sudo pkg_add ansible rsync--
 # ensure that only `ansible` is installed from our ports tree
@@ -42,7 +45,7 @@ fi
 # XXX this patch should be applied in our ports tree, but we desparately need
 # package builder first. remove this when the builder is ready.
 #
-if [ `ansible --version | head -n 1 | cut -d' ' -f 2` == '2.3.2.0' ]; then
+if [ `ansible --version | head -n 1 | cut -d' ' -f 2` == '2.3.2.0' && `uname -r` != 6.2 ]; then
     sudo patch -t -p3 -d /usr/local/lib/python2.7/site-packages/ansible <<__EOF__
 diff --git a/lib/ansible/modules/packaging/os/openbsd_pkg.py b/lib/ansible/modules/packaging/os/openbsd_pkg.py
 index 47c27f9..53659cf 100644
