@@ -7,6 +7,7 @@ box:
   - openbsd-5.9-amd64
   - openbsd-6.0-amd64
   - openbsd-6.1-amd64
+  - openbsd-6.2-amd64
   - centos-7.3-x86_64
   - debian-8.7-amd64
   - debian-8.8-amd64
