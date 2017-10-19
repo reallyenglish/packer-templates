@@ -4,18 +4,13 @@ set -e
 set -x
 
 # pkg.conf has been replaced with installurl since 6.1
-if [ `uanme -r` == 5.9 -o `uname -r` == 6.0 ]; then
+if [ `uname -r` == 5.9 -o `uname -r` == 6.0 ]; then
     sudo tee /etc/pkg.conf <<EOF
 installpath = fastly.cdn.openbsd.org
 EOF
 fi
 
 sudo pkg_add ansible rsync--
-# ensure that only `ansible` is installed from our ports tree
-sudo pkg_delete ansible
-ftp -o - https://github.com/reallyenglish/ports/archive/RE_`uname -r | sed -e 's/[.]/_/'`.tar.gz | sudo tar -C /usr -zxf -
-sudo mv /usr/ports-RE_`uname -r | sed -e 's/[.]/_/'` /usr/ports
-( cd /usr/ports/sysutils/ansible && sudo make install clean && sudo rm -rf /usr/ports/* )
 sudo ln -sf /usr/local/bin/python2.7 /usr/local/bin/python
 sudo ln -sf /usr/local/bin/python2.7-2to3 /usr/local/bin/2to3
 sudo ln -sf /usr/local/bin/python2.7-config /usr/local/bin/python-config
@@ -28,13 +23,24 @@ sndiod_flags=NO
 sendmail_flags=NO
 EOF
 
+# XXX OPENBSD_6_2 has a patch, skip it
+if [ `uname -r` != '6.2' ]; then
+
+    # ensure that only `ansible` is installed from our ports tree
+    # XXX `OPENBSD_6_2` has a fix, others need fixes in our ports tree
+    sudo pkg_delete ansible
+    ftp -o - https://github.com/reallyenglish/ports/archive/RE_`uname -r | sed -e 's/[.]/_/'`.tar.gz | sudo tar -C /usr -zxf -
+    sudo mv /usr/ports-RE_`uname -r | sed -e 's/[.]/_/'` /usr/ports
+    ( cd /usr/ports/sysutils/ansible && sudo make install clean && sudo rm -rf /usr/ports/* )
+fi
+
 # replace buggy openbsd_pkg.py with the latest, and known-to-work, one.
 # fixes https://github.com/reallyenglish/ansible-role-postfix/issues/13 and
 # others
 # XXX remove the workaround below when 5.9 has the latest ansible
 if [ `uname -r` == '5.9' ]; then
     sudo ftp -o /usr/local/lib/python2.7/site-packages/ansible/modules/extras/packaging/os/openbsd_pkg.py https://raw.githubusercontent.com/ansible/ansible/b134352d8ca33745c4277e8cb85af3ad2dcae2da/lib/ansible/modules/packaging/os/openbsd_pkg.py
-fi
+elif [ `ansible --version | head -n 1 | cut -d' ' -f 2` == '2.3.2.0' -a `uname -r` != '6.2' ]; then
 
 # apply a patch obtained from:
 # https://raw.githubusercontent.com/ansible/ansible/b1b90024e53614e556a23191eae4e9c262d05154/lib/ansible/modules/packaging/os/openbsd_pkg.py
@@ -45,7 +51,6 @@ fi
 # XXX this patch should be applied in our ports tree, but we desparately need
 # package builder first. remove this when the builder is ready.
 #
-if [ `ansible --version | head -n 1 | cut -d' ' -f 2` == '2.3.2.0' -a `uname -r` != '6.2' ]; then
     sudo patch -t -p3 -d /usr/local/lib/python2.7/site-packages/ansible <<__EOF__
 diff --git a/lib/ansible/modules/packaging/os/openbsd_pkg.py b/lib/ansible/modules/packaging/os/openbsd_pkg.py
 index 47c27f9..53659cf 100644
