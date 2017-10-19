@@ -15,7 +15,7 @@ when "freebsd"
   end
 when "openbsd"
   # XXX RE_5_9 does not have the latest ansible yet
-  if os[:release].to_f >= 6.0 && os[:release].to_f < 6.2
+  if os[:release].to_f >= 6.0 && os[:release].to_f <= 6.2
     describe command "ansible --version" do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match(/^ansible\s+2\.3\.2\.0\s+/) }
