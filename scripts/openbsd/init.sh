@@ -3,7 +3,7 @@
 set -e
 set -x
 
-# pkg.conf has been replaces with installurl since 6.1
+# pkg.conf has been replaced with installurl since 6.1
 if [ `uanme -r` == 5.9 -o `uname -r` == 6.0 ]; then
     sudo tee /etc/pkg.conf <<EOF
 installpath = fastly.cdn.openbsd.org
