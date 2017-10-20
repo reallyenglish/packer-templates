@@ -1,7 +1,7 @@
 Vagrant.configure('2') do |config|
   require "yaml"
   yaml = YAML.load_file("box.reallyenglish.yml")
-  images = yaml["box"].map { |b| Pathname(b) }
+  images = yaml["box"].map { |b| Pathname(b["name"]) }
 
   7.times do
     config.vm.network :private_network, type: :dhcp
@@ -17,6 +17,7 @@ Vagrant.configure('2') do |config|
       c.vm.provider :virtualbox do |v|
         v.name = name
         v.gui = false
+        v.cpus = ENV["VAGRANT_CPU_CORE"] || 2
       end
     end
   end
