@@ -86,6 +86,7 @@ end
 
 namespace :reallyenglish do
   require 'yaml'
+  require 'vagrant_cloud'
   vagrantcloud_user_name = ENV["VAGRANTCLOUD_USERNAME"] || "trombik"
 
   # workaround "can't find executable vagrant for gem vagrant. vagrant is not
@@ -98,12 +99,20 @@ namespace :reallyenglish do
   end
   ENV['PATH'] = "#{vagrant_path}:#{ENV['PATH']}"
 
-  @all_boxes = YAML.load_file("box.reallyenglish.yml")["box"]
+  @yaml = YAML.load_file("box.reallyenglish.yml")
+  @all_boxes = @yaml["box"].map { |i| i["name"] }
   ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
 
   namespace 'test' do
     def vagrant_hostname(name)
       "#{name.gsub(/[.]/, '_')}-virtualbox"
+    end
+
+    def version_of(name)
+      box = @yaml["box"].select { |i| i["name"] == name }.first
+      raise "cannot find #{name}" unless box
+      raise "box #{name} does not have `version` key" unless box.key?("version")
+      box["version"]
     end
 
     desc 'build and test all boxes'
@@ -195,6 +204,29 @@ namespace :reallyenglish do
       task b.to_sym do |_t|
         r = system("rm -f #{vagrant_hostname(b)}.box")
         raise "Failed to remove #{vagrant_hostname(b)}.box" unless r
+      end
+    end
+  end
+
+  namespace 'upload' do
+    @all_boxes.each do |b|
+      desc "Upload #{vagrant_hostname(b)}.box to vagrant cloud"
+      task b.to_sym do |_t|
+        unless ENV["VAGRANTCLOUD_ACCESS_TOKEN"]
+          raise "environment variable VAGRANTCLOUD_ACCESS_TOKEN must be defined"
+        end
+        vagrantcloud_access_token = ENV["VAGRANTCLOUD_ACCESS_TOKEN"]
+        account = VagrantCloud::Account.new(vagrantcloud_user_name, vagrantcloud_access_token)
+        filename = "#{b}-virtualbox.box"
+        raise "cannot find #{filename}" unless File.exist?(filename)
+        puts "Ensuring the `#{b}` box is created in vagrantcloud"
+        box = account.ensure_box(b)
+        puts "Ensuring the box has version `#{version_of(b)}`"
+        version = box.ensure_version(version_of(b))
+        puts "Ensuring the version `#{version_of(b)}` has virtualbox provider"
+        provider = version.ensure_provider('virtualbox', nil)
+        puts "Uploading `#{filename}` to vagrantcloud"
+        provider.upload_file(filename)
       end
     end
   end
