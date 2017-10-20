@@ -63,7 +63,7 @@ DEPENDENCIES
   rainbow
   rake
   serverspec
-  vagrant_cloud
+  vagrant_cloud (~> 1.1.0)
 
 BUNDLED WITH
    1.12.5
