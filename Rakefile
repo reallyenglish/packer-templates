@@ -126,7 +126,7 @@ namespace :reallyenglish do
   desc 'Build a box'
   task :build, [:host] do |_t, args|
     json_file = "#{args[:host]}.json"
-    r = system("packer build -only virtualbox-iso '#{json_file}'")
+    r = system("packer build -only virtualbox-iso -var 'cpus=2' '#{json_file}'")
     raise "Failed to build #{i}" unless r
   end
 
