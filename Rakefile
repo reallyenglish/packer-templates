@@ -86,6 +86,7 @@ end
 
 namespace :reallyenglish do
   require 'yaml'
+  vagrantcloud_user_name = ENV["VAGRANTCLOUD_USERNAME"] || "trombik"
 
   # workaround "can't find executable vagrant for gem vagrant. vagrant is not
   # currently included in the bundle, perhaps you meant to add it to your
@@ -97,75 +98,115 @@ namespace :reallyenglish do
   end
   ENV['PATH'] = "#{vagrant_path}:#{ENV['PATH']}"
 
-  @yaml = YAML.load_file("box.reallyenglish.yml")
+  @all_boxes = YAML.load_file("box.reallyenglish.yml")["box"]
   ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
 
-  desc 'Test all boxes'
-  task :test do |_t|
-    images = @yaml['box']
-    images.each do |image|
-      Rake::Task['reallyenglish:do_test'].invoke(image)
-      Rake::Task['reallyenglish:do_test'].reenable
+  namespace 'test' do
+    def vagrant_hostname(name)
+      "#{name.gsub(/[.]/, '_')}-virtualbox"
+    end
+
+    desc 'build and test all boxes'
+    task :all => @all_boxes.map { |i| "test:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "Test #{b}"
+      task b.to_sym => ["reallyenglish:build:#{b}",
+                        "reallyenglish:import:#{b}",
+                        "reallyenglish:boot:#{b}",
+                        "reallyenglish:spec:#{b}",
+                        "reallyenglish:destroy:#{b}"]
+    end
+  end
+  namespace 'build' do
+    desc 'build all boxes'
+    task :all => @all_boxes.map { |i| "build:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "Build #{b}"
+      task b.to_sym do |_t|
+        json_file = "#{b}.json"
+        r = system("packer build -only virtualbox-iso -var 'cpus=2' '#{json_file}'")
+        raise "Failed to build #{i}" unless r
+      end
     end
   end
 
-  desc 'Test a box'
-  task :do_test, [:host] do |_t, args|
-    [
-      'reallyenglish:build',
-      'reallyenglish:import',
-      'reallyenglish:up',
-      'reallyenglish:spec',
-      'reallyenglish:destroy'
-    ].each do |task|
-      Rake::Task[task].invoke(args[:host])
-      Rake::Task[task].reenable
+  namespace 'import' do
+    desc 'import all boxes'
+    task :all => @all_boxes.map { |i| "import:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "import #{b} as a test box"
+      task b.to_sym do |_t|
+        box_name = "#{vagrantcloud_user_name}/test-#{b}"
+        box_file = "#{b}-virtualbox.box"
+        r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
+        raise "Failed to box add test image #{b}" unless r
+      end
     end
   end
 
-  desc 'Build a box'
-  task :build, [:host] do |_t, args|
-    json_file = "#{args[:host]}.json"
-    r = system("packer build -only virtualbox-iso -var 'cpus=2' '#{json_file}'")
-    raise "Failed to build #{i}" unless r
+  namespace 'boot' do
+    desc 'import boot all boxes'
+    task :all => @all_boxes.map { |i| "boot:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "boot #{b} box"
+      task b.to_sym do |_t|
+        r = system("vagrant up '#{vagrant_hostname(b)}'")
+        raise "Failed to boot #{i}" unless r
+      end
+    end
   end
 
-  desc 'Import a box'
-  task :import, [:host] do |_t, args| 
-    box_name = "trombik/test-#{args[:host]}"
-    box_file = "#{args[:host]}-virtualbox.box"
-    r = system("vagrant box add --force --name '#{box_name}' '#{box_file}'")
-    raise "Failed to box add test image #{args[:host]}" unless r
+  namespace 'spec' do
+    desc 'Run serverspec tests on a VM'
+    task :all => @all_boxes.map { |i| "spec:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "Run serverspec on #{b} box"
+      RSpec::Core::RakeTask.new("#{b}") do |t|
+        t.pattern = 'reallyenglish_spec/**/*_spec.rb'
+        ENV['HOST'] = vagrant_hostname(b)
+      end
+    end
   end
 
-  desc 'Boot a VM'
-  task :up, [:host] do |_t, args|
-    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
-    r = system("vagrant up '#{vagrant_hostname}'")
-    raise "Failed to launch #{i}" unless r
+  namespace 'destroy' do
+    desc 'Destroy all VMs'
+    task :all => @all_boxes.map { |i| "destroy:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "Destroy #{b} VM"
+      task b.to_sym do |_t|
+        r = system("vagrant destroy -f '#{vagrant_hostname(b)}'")
+        raise "Failed to destroy #{vagrant_hostname(b)}" unless r
+      end
+    end
   end
 
-  desc 'Run serverspec tests on a VM'
-  RSpec::Core::RakeTask.new(:spec, :host) do |t, args|
-    t.pattern = 'reallyenglish_spec/**/*_spec.rb'
-    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
-    ENV['HOST'] = vagrant_hostname
+  namespace 'clean' do
+    desc 'Clean all VMs'
+    task :all => @all_boxes.map { |i| "clean:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "Clean #{b}"
+      task b.to_sym do |_t|
+        r = system("rm -f #{vagrant_hostname(b)}.box")
+        raise "Failed to remove #{vagrant_hostname(b)}.box" unless r
+      end
+    end
   end
 
-  desc 'Destroy a VM'
-  task :destroy, [:host] do |_t, args|
-    vagrant_hostname = "#{args[:host].gsub(/[.]/, '_')}-virtualbox"
-    r = system("vagrant destroy -f '#{vagrant_hostname}'")
-    raise "Failed to destroy #{i}" unless r
-  end
-
-  desc 'Clean'
-  task :clean do |_t|
-      ENV['VAGRANT_VAGRANTFILE'] = 'Vagrantfile.reallyenglish'
-      r = system('vagrant destroy -f')
+  desc "Destroy all VMs and clean all created boxes"
+  task :clean do
+    begin
+      system("vagrant destroy -f")
+    ensure
+      r = system("rm -f *.box")
       raise "Failed to destroy VMs" unless r
-      r = system('rm *.box')
-      raise "Failed to destroy VMs" unless r
+    end
   end
 end
 
