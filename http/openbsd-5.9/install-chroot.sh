@@ -4,7 +4,7 @@ set -e
 set -x
 
 cat <<EOF > /etc/pkg.conf
-installpath = ftp.openbsd.org
+installpath = fastly.cdn.openbsd.org
 EOF
 
 pkg_add sudo--
