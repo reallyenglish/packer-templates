@@ -241,6 +241,11 @@ namespace :reallyenglish do
   end
 
   namespace 'upload' do
+
+    # XXX this target is useful only for the default VAGRANTCLOUD_USERNAME
+    # vagrant_cloud gem assumes single user user case only, although
+    # vagrantcloud service provides ACLs per box, i.e. user `foo` cannot upload
+    # `bar/boxname`, which is NOT owned by user `foo`.
     @all_boxes.each do |b|
       desc "Upload #{vagrant_hostname(b)}.box to vagrant cloud"
       task b.to_sym do |_t|
