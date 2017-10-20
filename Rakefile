@@ -120,11 +120,19 @@ namespace :reallyenglish do
 
     @all_boxes.each do |b|
       desc "Test #{b}"
-      task b.to_sym => ["reallyenglish:build:#{b}",
-                        "reallyenglish:import:#{b}",
-                        "reallyenglish:boot:#{b}",
-                        "reallyenglish:spec:#{b}",
-                        "reallyenglish:destroy:#{b}"]
+      tasks = [ "reallyenglish:build:#{b}", "reallyenglish:import:#{b}",
+                "reallyenglish:boot:#{b}", "reallyenglish:spec:#{b}",
+                "reallyenglish:destroy:#{b}" ]
+      task b.to_sym => tasks do |_t|
+
+        # boot the box with single CPU to test if the box boots. no spec files
+        # are executed because what is tested here is that the box is able to
+        # boot with a single CPU. when it does not, vagrant will fail.
+        #
+        # requested at https://github.com/reallyenglish/packer-templates/pull/54#pullrequestreview-70731612
+        Rake::Task["reallyenglish:boot_single_cpu:#{b}"].execute
+        Rake::Task["reallyenglish:destroy:#{b}"].execute
+      end
     end
   end
   namespace 'build' do
@@ -157,7 +165,7 @@ namespace :reallyenglish do
   end
 
   namespace 'boot' do
-    desc 'import boot all boxes'
+    desc 'boot all boxes'
     task :all => @all_boxes.map { |i| "boot:#{i}" }
 
     @all_boxes.each do |b|
@@ -165,6 +173,30 @@ namespace :reallyenglish do
       task b.to_sym do |_t|
         r = system("vagrant up '#{vagrant_hostname(b)}'")
         raise "Failed to boot #{i}" unless r
+      end
+    end
+  end
+
+  namespace 'boot_single_cpu' do
+    desc 'boot all boxes with single CPU'
+    task :all => @all_boxes.map { |i| "boot_single_cpu:#{i}" }
+
+    @all_boxes.each do |b|
+      desc "boot #{b} box with single CPU"
+      task b.to_sym do |_t|
+        env_defined = ENV['VAGRANT_CPU_CORE'] ? true : false
+        old_env = nil
+        if env_defined
+          old_env = ENV['VAGRANT_CPU_CORE']
+        end
+        ENV['VAGRANT_CPU_CORE'] = "1"
+        r = system("vagrant up '#{vagrant_hostname(b)}'")
+        if env_defined
+          ENV['VAGRANT_CPU_CORE'] = old_env
+        else
+          ENV.delete('VAGRANT_CPU_CORE')
+        end
+        raise "Failed to boot #{i} with single CPU" unless r
       end
     end
   end
