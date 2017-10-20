@@ -250,15 +250,17 @@ namespace :reallyenglish do
         vagrantcloud_access_token = ENV["VAGRANTCLOUD_ACCESS_TOKEN"]
         account = VagrantCloud::Account.new(vagrantcloud_user_name, vagrantcloud_access_token)
         filename = "#{b}-virtualbox.box"
+        boxname = "ansible-#{b}"
         raise "cannot find #{filename}" unless File.exist?(filename)
-        puts "Ensuring the `#{b}` box is created in vagrantcloud"
-        box = account.ensure_box(b)
+        puts "Ensuring the `#{boxname}` box is created in vagrantcloud"
+        box = account.ensure_box(boxname)
         puts "Ensuring the box has version `#{version_of(b)}`"
         version = box.ensure_version(version_of(b))
         puts "Ensuring the version `#{version_of(b)}` has virtualbox provider"
         provider = version.ensure_provider('virtualbox', nil)
         puts "Uploading `#{filename}` to vagrantcloud"
         provider.upload_file(filename)
+        puts "Successfully uploaded"
       end
     end
   end
