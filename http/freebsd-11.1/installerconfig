@@ -37,3 +37,10 @@ chmod 440 /usr/local/etc/sudoers.d/vagrant
 cat <<EOF >> /boot/loader.conf
 autoboot_delay="0"
 EOF
+
+# XXX sudo-1.8.21p2 has a bug that causes segfault when hostname is not set
+# https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=222510
+# XXX remove this when the latest package gets patched
+cat <<EOF >> /etc/rc.conf
+hostname="vagrant"
+EOF
