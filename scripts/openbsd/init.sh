@@ -29,7 +29,7 @@ if [ `uname -r` != '6.2' ]; then
     # ensure that only `ansible` is installed from our ports tree
     # XXX `OPENBSD_6_2` has a fix, others need fixes in our ports tree
     sudo pkg_delete ansible
-    ftp -o - https://github.com/reallyenglish/ports/archive/RE_`uname -r | sed -e 's/[.]/_/'`.tar.gz | sudo tar -C /usr -zxf -
+    ftp -o /tmp/re_ports.tar.gz https://github.com/reallyenglish/ports/archive/RE_`uname -r | sed -e 's/[.]/_/'`.tar.gz && sudo tar -C /usr -zxf /tmp/re_ports.tar.gz && rm /tmp/re_ports.tar.gz
     sudo mv /usr/ports-RE_`uname -r | sed -e 's/[.]/_/'` /usr/ports
     ( cd /usr/ports/sysutils/ansible && sudo make install clean && sudo rm -rf /usr/ports/* )
 fi

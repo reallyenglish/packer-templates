@@ -87,7 +87,7 @@ end
 namespace :reallyenglish do
   require 'yaml'
   require 'vagrant_cloud'
-  vagrantcloud_user_name = ENV["VAGRANTCLOUD_USERNAME"] || "trombik"
+  vagrantcloud_user_name = ENV["VAGRANTCLOUD_USERNAME"] || "mitsuruy"
 
   # workaround "can't find executable vagrant for gem vagrant. vagrant is not
   # currently included in the bundle, perhaps you meant to add it to your
