@@ -104,7 +104,7 @@
     "iso_checksum": "b34765e1c79c7e2fbf4adc5d8f9769ad6bf8c3f3e0b96928aa33e9811ac192d7",
     "iso_checksum_type": "sha256",
     "memory": "512",
-    "mirror": "http://ftp5.usa.openbsd.org/pub/OpenBSD",
+    "mirror": "http://ftp3.usa.openbsd.org/pub/OpenBSD",
     "ssh_timeout": "60m"
   }
 }
