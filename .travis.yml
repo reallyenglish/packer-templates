@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.2
+  - 2.4
 install:
   - bundle install
   - curl -L -o packer.zip https://releases.hashicorp.com/packer/1.0.3/packer_1.0.3_linux_amd64.zip && unzip -d bin packer.zip
