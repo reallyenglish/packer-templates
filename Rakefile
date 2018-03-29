@@ -143,7 +143,7 @@ namespace :reallyenglish do
       desc "Build #{b}"
       task b.to_sym do |_t|
         json_file = "#{b}.json"
-        r = system("packer build -only virtualbox-iso -var 'cpus=2' '#{json_file}'")
+        r = system("packer build -only virtualbox-iso -var 'cpus=#{ ENV['VAGRANT_CPU_CORE'] || 2 }' '#{json_file}'")
         raise "Failed to build #{i}" unless r
       end
     end
