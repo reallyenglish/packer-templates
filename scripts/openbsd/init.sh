@@ -23,11 +23,13 @@ sndiod_flags=NO
 sendmail_flags=NO
 EOF
 
-# XXX OPENBSD_6_2 has a patch, skip it
-if [ `uname -r` != '6.2' ]; then
+osrelease=`uname -r|sed -e 's/\.//'`
+
+# XXX OPENBSD_6_2 and above have a patch, skip it
+if [ $osrelease -lt 62 ]; then
 
     # ensure that only `ansible` is installed from our ports tree
-    # XXX `OPENBSD_6_2` has a fix, others need fixes in our ports tree
+    # XXX `OPENBSD_6_2` and above have a fix, others need fixes in our ports tree
     sudo pkg_delete ansible
     ftp -o /tmp/re_ports.tar.gz https://github.com/reallyenglish/ports/archive/RE_`uname -r | sed -e 's/[.]/_/'`.tar.gz && sudo tar -C /usr -zxf /tmp/re_ports.tar.gz && rm /tmp/re_ports.tar.gz
     sudo mv /usr/ports-RE_`uname -r | sed -e 's/[.]/_/'` /usr/ports
