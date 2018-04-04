@@ -19,6 +19,10 @@ box:
     version: 1.0.0
   - name: openbsd-6.2-15GB-amd64
     version: 1.0.1
+  - name: openbsd-6.3-amd64
+    version: 1.0.0
+  - name: openbsd-6.3-15GB-amd64
+    version: 1.0.0
   - name: centos-7.3-x86_64
     version: 1.2.0
   - name: debian-8-amd64
